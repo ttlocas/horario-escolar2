@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>Disponibilidade</title>
+</head>
+
+<body>
+
+<div class="menu">
+<h2>🏫 Escola</h2>
+<a href="index.html">Dashboard</a>
+<a href="professores.html">Professores</a>
+<a href="turmas.html">Turmas</a>
+<a href="horarios.html">Horários</a>
+<a href="disponibilidade.html">Disponibilidade</a>
+</div>
+
+<div class="content">
+
+<h1>🕒 Horas Vagas</h1>
+
+<div class="card">
+
+<select id="professor"></select>
+
+<select id="dia">
+<option>Segunda</option>
+<option>Terca</option>
+<option>Quarta</option>
+<option>Quinta</option>
+<option>Sexta</option>
+</select>
+
+<input id="hora" placeholder="Ex: 10:00">
+
+<button onclick="add()">Adicionar</button>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Professor</th>
+<th>Dia</th>
+<th>Hora</th>
+<th>Ação</th>
+</tr>
+</thead>
+
+<tbody id="lista"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function carregarProfessores(){
+let profs = await fetch("/professores").then(r=>r.json())
+let select = document.getElementById("professor")
+
+select.innerHTML=""
+
+profs.forEach(p=>{
+select.innerHTML += `<option>${p.nome}</option>`
+})
+}
+
+async function carregar(){
+
+let dados = await fetch("/disponibilidade").then(r=>r.json())
+
+let lista = document.getElementById("lista")
+lista.innerHTML=""
+
+dados.forEach(d=>{
+
+lista.innerHTML += `
+<tr>
+<td>${d.professor}</td>
+<td>${d.dia}</td>
+<td>${d.hora}</td>
+<td><button onclick="apagar(${d.id})">❌</button></td>
+</tr>
+`
+
+})
+
+}
+
+async function add(){
+
+let professor=document.getElementById("professor").value
+let dia=document.getElementById("dia").value
+let hora=document.getElementById("hora").value
+
+await fetch("/disponibilidade",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({professor,dia,hora})
+})
+
+carregar()
+
+}
+
+async function apagar(id){
+
+await fetch("/disponibilidade/"+id,{
+method:"DELETE"
+})
+
+carregar()
+
+}
+
+carregarProfessores()
+carregar()
+
+</script>
+
+</body>
+</html>
