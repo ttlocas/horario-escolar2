@@ -14,12 +14,50 @@
 <a href="turmas.html">Turmas</a>
 <a href="horarios.html">Horários</a>
 <a href="disponibilidade.html">Disponibilidade</a>
+<a href="professor_acesso.html">Acesso</a>
 </div>
 
 <div class="content">
+
 <h1>Painel Escolar</h1>
 <p>Bem-vindo ao sistema de gestão de horários.</p>
+
+<hr>
+
+<h2>👨‍🏫 Entrar como professor</h2>
+
+<div id="listaProfessores"></div>
+
 </div>
+
+<script>
+async function carregarProfessores(){
+    let r = await fetch("/professores")
+    let dados = await r.json()
+
+    let div = document.getElementById("listaProfessores")
+    div.innerHTML = ""
+
+    dados.forEach(p=>{
+    let btn = document.createElement("button")
+    btn.textContent = p.nome
+
+    btn.addEventListener("click", () => {
+        entrar(p.nome)
+    })
+
+    div.appendChild(btn)
+    div.appendChild(document.createElement("br"))
+    div.appendChild(document.createElement("br"))
+})
+}
+
+function entrar(nome){
+    window.location.href = "professor_acesso.html?nome=" + encodeURIComponent(nome)
+}
+
+carregarProfessores()
+</script>
 
 </body>
 </html>

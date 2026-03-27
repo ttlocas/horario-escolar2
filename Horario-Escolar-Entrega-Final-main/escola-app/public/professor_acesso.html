@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>Área do Professor</title>
+</head>
+
+<body>
+
+<div class="menu">
+<h2>🏫 Escola</h2>
+<a href="index.html">Voltar</a>
+</div>
+
+<div class="content">
+
+<h1 id="nomeProfessor"></h1>
+
+<h3>📅 As tuas aulas</h3>
+<div id="horarios"></div>
+
+</div>
+
+<script>
+
+// pegar nome da URL
+let params = new URLSearchParams(window.location.search)
+let nome = params.get("nome")
+
+document.getElementById("nomeProfessor").innerText = "Professor: " + nome
+
+async function carregar(){
+    let dados = await fetch("/horarios").then(r=>r.json())
+
+    let div = document.getElementById("horarios")
+    div.innerHTML = ""
+
+    let aulas = dados.filter(a => a.professor == nome)
+
+    if(aulas.length === 0){
+        div.innerHTML = "Sem aulas"
+        return
+    }
+
+    aulas.forEach(a=>{
+        div.innerHTML += `
+        <div class="card">
+            <b>${a.disciplina}</b><br>
+            ${a.dia} - ${a.hora}<br>
+            Turma: ${a.turma}
+        </div>
+        `
+    })
+}
+
+carregar()
+
+</script>
+
+</body>
+</html>
